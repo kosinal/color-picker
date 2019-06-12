@@ -1,21 +1,16 @@
 package com.pex.colorindicator.image;
 
+import com.pex.colorindicator.SpringBootRunner;
 import com.pex.colorindicator.domain.DecodedPicture;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.nio.file.Paths;
 import java.util.UUID;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest
-@ActiveProfiles("test")
-public class ImageDecoderTest {
+@SuppressWarnings("SpringJavaAutowiredMembersInspection")
+public class ImageDecoderTest extends SpringBootRunner {
 
     @Autowired
     private ImageDecoder imageDecoder;
