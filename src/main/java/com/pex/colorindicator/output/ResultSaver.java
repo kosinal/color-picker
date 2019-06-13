@@ -39,6 +39,10 @@ public class ResultSaver {
         }
     }
 
+    BlockingQueue<DecodedPicture> getQueue() {
+        return queue;
+    }
+
     @SneakyThrows
     public void add(DecodedPicture decodedPicture) {
         queue.put(decodedPicture);
