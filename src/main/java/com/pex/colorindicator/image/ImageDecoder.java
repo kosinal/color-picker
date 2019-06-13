@@ -34,7 +34,10 @@ public class ImageDecoder {
                         y -> image.getRGB(x, y)
                 )
         ).forEach(
-                key -> resMap.merge(key, 1, Integer::sum)
+                key -> {
+                    final int fixedKey = key & 0xffffff;
+                    resMap.merge(fixedKey, 1, Integer::sum);
+                }
         );
 
         String bestColors = resMap.entrySet().stream()
