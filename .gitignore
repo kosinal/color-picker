@@ -60,5 +60,4 @@ __pycache__
 **/__pycache__
 
 ### Input and Output folders for testing ###
-*.csv
-**/*.csv
+result.csv
