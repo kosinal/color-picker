@@ -7,8 +7,6 @@ import com.pex.colorindicator.image.ImageDownload;
 import com.pex.colorindicator.output.ResultSaver;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.Validate;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -56,7 +54,6 @@ public class ColorPicker {
                 processFileMetadata(tmpFolder, buffer);
             }
         }
-
         FileUtils.deleteDirectory(tmpFolder.toFile());
     }
 
@@ -66,7 +63,7 @@ public class ColorPicker {
                 .filter(i -> i.getCachedFile() != null)
                 .map(imageDecoder::decodeImage)
                 .forEach(resultSaver::add);
-        resultSaver.drain();
+        resultSaver.appendResultIntoFile();
         buffer.clear();
     }
 

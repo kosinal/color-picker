@@ -18,13 +18,13 @@ public class ImageDecoderTest extends SpringBootRunner {
     private DecodedPicture createTestPicture(String path) {
         return new DecodedPicture(
                 UUID.randomUUID().toString(),
-                Paths.get(path)
+                Paths.get(String.format("./src/test/resources/com/pex/colorindicator/image/%s", path))
         );
     }
 
     @Test
     public void checkSingleColorImage() {
-        DecodedPicture picture = createTestPicture("./src/test/resources/single_color.png");
+        DecodedPicture picture = createTestPicture("single_color.png");
         imageDecoder.decodeImage(picture);
         Assert.assertEquals(
                 "#3F48CC", picture.getBestColors()
@@ -33,7 +33,7 @@ public class ImageDecoderTest extends SpringBootRunner {
 
     @Test
     public void checkTripleColorImage() {
-        DecodedPicture picture = createTestPicture("./src/test/resources/triple_color.png");
+        DecodedPicture picture = createTestPicture("triple_color.png");
         imageDecoder.decodeImage(picture);
         Assert.assertEquals(
                 "#ED1C24,#A349A4,#FFAEC9", picture.getBestColors()
@@ -42,7 +42,7 @@ public class ImageDecoderTest extends SpringBootRunner {
 
     @Test
     public void checkMoreColorImage() {
-        DecodedPicture picture = createTestPicture("./src/test/resources/more_color.png");
+        DecodedPicture picture = createTestPicture("more_color.png");
         imageDecoder.decodeImage(picture);
         Assert.assertEquals(
                 "#ED1C24,#3F48CC,#FF7F27", picture.getBestColors()
@@ -51,7 +51,7 @@ public class ImageDecoderTest extends SpringBootRunner {
 
     @Test
     public void checkBorderColorImage() {
-        DecodedPicture picture = createTestPicture("./src/test/resources/border_color.png");
+        DecodedPicture picture = createTestPicture("border_color.png");
         imageDecoder.decodeImage(picture);
         Assert.assertEquals(
                 "#3F48CC,#ED1C24", picture.getBestColors()

@@ -45,7 +45,7 @@ public class ResultSaver {
     }
 
     @SneakyThrows
-    public void drain() {
+    public void appendResultIntoFile() {
         List<String> resultList = queue.stream().map(this::decodeImageToOutput).collect(Collectors.toList());
         queue.clear();
         Files.write(

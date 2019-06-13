@@ -1,0 +1,4 @@
+colorpicker:
+  batch-size: 1000
+  output-separator: ","
+  path: "./result.csv"
