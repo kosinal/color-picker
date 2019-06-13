@@ -7,7 +7,6 @@ import com.pex.colorindicator.image.ImageDownload;
 import com.pex.colorindicator.output.ResultSaver;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.Validate;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -20,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-@Profile("!test")
 public class ColorPicker {
 
     private final ImageDownload imageDownload;
