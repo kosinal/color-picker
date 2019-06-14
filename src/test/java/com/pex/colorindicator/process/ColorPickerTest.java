@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertArrayEquals;
 
@@ -43,7 +44,7 @@ public class ColorPickerTest extends SpringBootRunner {
     public void setUp() {
         Mockito.when(outputConfiguration.getBatchSize()).thenReturn(1000);
         Mockito.when(imageDownload.downloadImage(Mockito.any(), Mockito.anyString()))
-                .thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+                .thenAnswer(invocationOnMock -> Optional.of(invocationOnMock.getArgument(0)));
         Mockito.when(imageDecoder.decodeImage(Mockito.any())).thenAnswer(
                 invocationOnMock -> invocationOnMock.getArgument(0)
         );
