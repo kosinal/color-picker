@@ -8,10 +8,12 @@ import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
+import java.util.Optional;
+import java.util.function.IntConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -40,10 +42,11 @@ public class ImageDecoder {
      */
     @SneakyThrows
     public DecodedPicture decodeImage(DecodedPicture decodedPicture) {
-        if (!decodedPicture.getCachedFile().isPresent()) {
+        Optional<Path> cachedFile = decodedPicture.getCachedFile();
+        if (!cachedFile.isPresent()) {
             throw new IllegalStateException("Got image without cached file");
         }
-        final BufferedImage image = ImageIO.read(decodedPicture.getCachedFile().get().toFile());
+        final BufferedImage image = ImageIO.read(cachedFile.get().toFile());
         final Map<Integer, Integer> resMap = new HashMap<>();
 
         scanImage(image, i -> resMap.merge(i, 1, Integer::sum));
@@ -77,7 +80,7 @@ public class ImageDecoder {
      * @param imageProcessor processor for fixed keys
      */
     private void scanImage(BufferedImage image,
-                           Consumer<Integer> imageProcessor) {
+                           IntConsumer imageProcessor) {
         final int width = image.getWidth();
         final int height = image.getHeight();
 
