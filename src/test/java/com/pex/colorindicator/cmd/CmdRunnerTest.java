@@ -6,8 +6,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
+import static org.mockito.Mockito.*;
 
 
 public class CmdRunnerTest extends SpringBootRunner {
@@ -34,6 +35,37 @@ public class CmdRunnerTest extends SpringBootRunner {
     public void checkPathPassing() throws Exception {
         final String path = "checkPath";
         cmdRunner.run(path);
-        Mockito.verify(colorPicker).processInputFile(path);
+        verify(colorPicker).processInputFile(path);
+    }
+
+    @Test
+    public void checkAllFilesAreProcessed() throws Exception {
+        final String path = "checkPath";
+        final String failPath = "failPath";
+
+        expectedException.expect(IllegalStateException.class);
+        expectedException.expectMessage("Some processing failed. Check the log.");
+
+        doAnswer(invocationOnMock -> {
+            if (invocationOnMock.getArgument(0).equals(failPath)) {
+                throw new IllegalArgumentException("Fail");
+            } else {
+                return null;
+            }
+        }).when(colorPicker).processInputFile(anyString());
+
+        Exception lastEx = new Exception("Run did not fail, but it should. Check the strategy");
+        try {
+            cmdRunner.run(failPath, path);
+        } catch (Exception e) {
+            // We need this so we can check the calling of coloPicker.
+            // Exception will be thrown on the end of test
+            lastEx = e;
+        }
+
+        verify(colorPicker).processInputFile(eq(path));
+        verify(colorPicker).processInputFile(eq(failPath));
+
+        throw lastEx;
     }
 }
