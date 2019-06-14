@@ -13,9 +13,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 public class ImageDownloadTest extends SpringBootRunner {
@@ -32,13 +32,14 @@ public class ImageDownloadTest extends SpringBootRunner {
 
     @Test
     public void downloadFromFakeUrl() {
-        assertNull(imageDownload.downloadImage(testPath, "https://fakeurl.eu/"));
+        assertFalse(imageDownload.downloadImage(testPath, "https://fakeurl.eu/").isPresent());
     }
 
     @Test
     public void downloadTestFile() throws IOException {
-        Path path = imageDownload.downloadImage(testPath, "http://i.imgur.com/TKLs9lo.jpg/");
-        assertImagesEquals(Paths.get("./src/test/resources/com/pex/colorindicator/image/TKLs9lo.jpg"), path);
+        Optional<Path> path = imageDownload.downloadImage(testPath, "http://i.imgur.com/TKLs9lo.jpg/");
+        assertTrue(path.isPresent());
+        assertImagesEquals(Paths.get("./src/test/resources/com/pex/colorindicator/image/TKLs9lo.jpg"), path.get());
     }
 
     private void assertImagesEquals(Path expectedImagePath, Path realImagePath) throws IOException {

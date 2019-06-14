@@ -18,12 +18,27 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class responsible for the business logic for counting most common color in the picture
+ */
 @Component
 public class ColorPicker {
 
+    /**
+     * Downloader of images from internet
+     */
     private final ImageDownload imageDownload;
+    /**
+     * Decoder of image into most common colors
+     */
     private final ImageDecoder imageDecoder;
+    /**
+     * Queue for holding results and writing to target file
+     */
     private final ResultSaver resultSaver;
+    /**
+     * Configuration of application
+     */
     private final OutputConfiguration outputConfiguration;
 
     public ColorPicker(ImageDownload imageDownload, ImageDecoder imageDecoder, ResultSaver resultSaver,
@@ -34,6 +49,16 @@ public class ColorPicker {
         this.outputConfiguration = Validate.notNull(outputConfiguration, "Output Configuration cannot be null");
     }
 
+    /**
+     * Read all lines from path given as a input parameters and for every line in the file, compute most common
+     * colors and store the result in the file.
+     * Due to possible size of the file, all rows are not loaded into memory, but file is read and processed by
+     * batches. The result file is also populated by batches.
+     * Due to a nature of multiprocessing, the order of the rows in result file is not guaranteed.
+     *
+     * @param path input path of file
+     * @throws IOException if eny IO operation will fail
+     */
     public void processInputFile(String path) throws IOException {
         final Path sourceFile = Paths.get(path);
         final Path tmpFolder = Files.createTempDirectory("color-check");
@@ -55,14 +80,23 @@ public class ColorPicker {
         FileUtils.deleteDirectory(tmpFolder.toFile());
     }
 
-    private void processFileMetadata(Path tmpFolder, List<String> buffer) {
-        buffer.parallelStream()
+    /**
+     * For all links in input parameter, download the file from internet and get most common color for each
+     * downloaded image.
+     * When all images are processed, same the result into the result file.
+     * This operation is used for batch processing
+     *
+     * @param tmpFolder temporal folder for caching images
+     * @param links     list of links to be processed
+     */
+    private void processFileMetadata(Path tmpFolder, List<String> links) {
+        links.parallelStream()
                 .map(i -> new DecodedPicture(i, imageDownload.downloadImage(tmpFolder, i)))
-                .filter(i -> i.getCachedFile() != null)
+                .filter(i -> i.getCachedFile().isPresent())
                 .map(imageDecoder::decodeImage)
                 .forEach(resultSaver::add);
         resultSaver.appendResultIntoFile();
-        buffer.clear();
+        links.clear();
     }
 
 }

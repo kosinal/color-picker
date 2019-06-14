@@ -29,24 +29,34 @@ public class CmdRunner implements CommandLineRunner {
     }
 
     /**
-     * Check, if input arguments are equal to
+     * Check, if there is at least one passed arguments. Than for each argument process the file using
+     * {@link ColorPicker}.
+     * All files in args are processed, even if one fail. But if one will fail, the result of the run
+     * will throw an {@link IllegalStateException}.
      *
-     * @param args
-     * @throws Exception
+     * @param args input paths to files with links
+     * @throws IllegalStateException thrown when any job will fail
      */
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         if (args.length == 0) {
             throw new IllegalArgumentException("Missing path argument");
         }
         Boolean success = Stream.of(args)
                 .map(this::safeProcessInputFile)
-                .reduce(true, (left, right) -> left & right);
+                .reduce(true, (left, right) -> left && right);
         if (!success) {
             throw new IllegalStateException("Some processing failed. Check the log.");
         }
     }
 
+    /**
+     * Process input file by {@link ColorPicker}. If no exception is raised, than return true.
+     * If there is some exception, than return false and log the exception using logger.
+     *
+     * @param fileName name of the file to be process
+     * @return indicator, if the file was processed without errors
+     */
     private boolean safeProcessInputFile(String fileName) {
         try {
             colorPicker.processInputFile(fileName);
